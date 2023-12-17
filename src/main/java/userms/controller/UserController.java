@@ -2,6 +2,7 @@ package userms.controller;
 
 import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -23,36 +24,40 @@ public class UserController {
     private UserService userService;
     @Autowired
     private RestTemplate restTemplate;
+    @Value("${server.port}")
+    private String port;
+    private final String providerName = "provide-service";
 
     @GetMapping("/selectById")
-    public User select(@RequestParam(value = "id") Integer id){
-        HttpEntity<User> res = restTemplate.getForEntity("http://localhost:8080/user/selectById?id=" + id, User.class);
+    public User select(@RequestParam(value = "id") Integer id) {
+        HttpEntity<User> res = restTemplate.getForEntity("http://" + providerName + "/user/selectById?id=" + id, User.class);
         System.out.println("UserSelectById");
+
         return res.getBody();
     }
 
     @PostMapping("/selectAll")
     public List<User> selectAll(@RequestBody User user) {
         System.out.println("UserSelectAll");
-        return userService.selectAll(user.getPageNum(),user.getPageSize());
+        return userService.selectAll(user.getPageNum(), user.getPageSize());
     }
 
     @GetMapping("/deleteById")
-    public boolean deleteById(@RequestParam(value = "id") Integer id){
+    public boolean deleteById(@RequestParam(value = "id") Integer id) {
         HttpEntity<List> res = restTemplate.getForEntity("http://localhost:8080/user/deleteById?id=" + id, List.class);
         System.out.println("deleteById");
         return !Objects.requireNonNull(res.getBody()).isEmpty();
     }
 
     @PostMapping("/insert")
-    public boolean insertUser(@RequestBody User user){
+    public boolean insertUser(@RequestBody User user) {
         HttpEntity<List> res = restTemplate.postForEntity("http://localhost:8080/user/insert", user, List.class);
         System.out.println("insertUser");
         return !Objects.requireNonNull(res.getBody()).isEmpty();
     }
 
     @PostMapping("/update")
-    public Boolean updateUser(@RequestBody User user){
+    public Boolean updateUser(@RequestBody User user) {
         HttpEntity<List> res = restTemplate.postForEntity("http://localhost:8080/user/update", user, List.class);
         System.out.println("updateUser");
         return !Objects.requireNonNull(res.getBody()).isEmpty();
