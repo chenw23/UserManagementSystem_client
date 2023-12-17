@@ -21,10 +21,11 @@ import java.util.logging.Logger;
 public class UserController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private RestTemplate restTemplate;
 
     @GetMapping("/selectById")
     public User select(@RequestParam(value = "id") Integer id){
-        RestTemplate restTemplate = new RestTemplate();
         HttpEntity<User> res = restTemplate.getForEntity("http://localhost:8080/user/selectById?id=" + id, User.class);
         System.out.println("UserSelectById");
         return res.getBody();
@@ -38,7 +39,6 @@ public class UserController {
 
     @GetMapping("/deleteById")
     public boolean deleteById(@RequestParam(value = "id") Integer id){
-        RestTemplate restTemplate = new RestTemplate();
         HttpEntity<List> res = restTemplate.getForEntity("http://localhost:8080/user/deleteById?id=" + id, List.class);
         System.out.println("deleteById");
         return !Objects.requireNonNull(res.getBody()).isEmpty();
@@ -46,7 +46,6 @@ public class UserController {
 
     @PostMapping("/insert")
     public boolean insertUser(@RequestBody User user){
-        RestTemplate restTemplate = new RestTemplate();
         HttpEntity<List> res = restTemplate.postForEntity("http://localhost:8080/user/insert", user, List.class);
         System.out.println("insertUser");
         return !Objects.requireNonNull(res.getBody()).isEmpty();
@@ -54,7 +53,6 @@ public class UserController {
 
     @PostMapping("/update")
     public Boolean updateUser(@RequestBody User user){
-        RestTemplate restTemplate = new RestTemplate();
         HttpEntity<List> res = restTemplate.postForEntity("http://localhost:8080/user/update", user, List.class);
         System.out.println("updateUser");
         return !Objects.requireNonNull(res.getBody()).isEmpty();
