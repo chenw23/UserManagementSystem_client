@@ -7,7 +7,7 @@ import userms.dto.User;
 import java.util.List;
 
 /**
- * @author ZHZ
+ * @author 
  */
 public interface RoleService {
     Role selectById(Integer r_id);

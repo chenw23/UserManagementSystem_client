@@ -7,7 +7,7 @@ import userms.dto.UserRole;
 import java.util.List;
 
 /**
- * @author ZHZ
+ * @author 
  */
 public interface UserRoleService {
     /**

@@ -1,59 +1,49 @@
 package userms.controller;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
-import userms.dto.PagingParam;
+import userms.client.UserClient;
 import userms.dto.User;
-import userms.service.UserService;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Logger;
 
-/**
- * @author ZHZ
- */
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
     @Autowired
-    private UserService userService;
-    @Autowired
     private RestTemplate restTemplate;
-    @Value("${server.port}")
-    private String port;
+    @Resource
+    private UserClient userClient;
     private final String providerName = "provide-service";
 
     @GetMapping("/selectById")
+    @ResponseBody
     public User select(@RequestParam(value = "id") Integer id) {
-        HttpEntity<User> res = restTemplate.getForEntity("http://" + providerName + "/user/selectById?id=" + id, User.class);
+//        User res = restTemplate.getForObject("http://" + providerName + "/user/selectById?id=" + id, User.class);
+
         System.out.println("UserSelectById");
-
-        return res.getBody();
-    }
-
-    @PostMapping("/selectAll")
-    public List<User> selectAll(@RequestBody User user) {
-        System.out.println("UserSelectAll");
-        return userService.selectAll(user.getPageNum(), user.getPageSize());
+//        return res;
+        return userClient.select(id);
     }
 
     @GetMapping("/deleteById")
-    public boolean deleteById(@RequestParam(value = "id") Integer id) {
-        HttpEntity<List> res = restTemplate.getForEntity("http://localhost:8080/user/deleteById?id=" + id, List.class);
-        System.out.println("deleteById");
-        return !Objects.requireNonNull(res.getBody()).isEmpty();
+    public List<User> deleteById(@RequestParam(value = "id") Integer id) {
+//        List<User> res = restTemplate.getForObject("http://localhost:8080/user/deleteById?id=" + id, List.class);
+//        System.out.println("deleteById");
+//        return res;
+        return userClient.deleteById(id);
     }
 
     @PostMapping("/insert")
-    public boolean insertUser(@RequestBody User user) {
-        HttpEntity<List> res = restTemplate.postForEntity("http://localhost:8080/user/insert", user, List.class);
+    public List<User> insertUser(@RequestBody User user) {
+        List<User> res = restTemplate.postForObject("http://localhost:8080/user/insert", user, List.class);
         System.out.println("insertUser");
-        return !Objects.requireNonNull(res.getBody()).isEmpty();
+        return res;
     }
 
     @PostMapping("/update")
